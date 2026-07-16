@@ -19,6 +19,8 @@ from sklearn.svm import SVR
 # =============================================================================
 
 # Folder containing the file produced by generate_features.py.
+
+
 FEATURES_DIR = Path("data")
 FEATURES_CSV = FEATURES_DIR / "generated_features.csv"
 
@@ -32,8 +34,11 @@ EPSILON = 0.1
 GAMMA = 0.01
 
 # Keep these fixed while comparing hyperparameters.
+# Folds are the name for the number of splits in cross-validation. Random state is used to shuffle the training data before splitting into folds.
 N_SPLITS = 5
 RANDOM_STATE = 0
+
+
 
 # Keep this False during hyperparameter optimisation.
 # Change it to True only after choosing the final hyperparameters from CV.
