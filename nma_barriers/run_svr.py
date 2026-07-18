@@ -75,7 +75,6 @@ def make_model() -> Pipeline:
         ]
     )
 
-
 def calculate_metrics(
     y_true: np.ndarray,
     y_pred: np.ndarray,
