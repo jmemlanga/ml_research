@@ -1,6 +1,4 @@
 
-
-
 #Import necessary libraries
 
 from pathlib import Path
@@ -18,8 +16,11 @@ from sklearn.model_selection import KFold, cross_validate
 
 #Settings that stay fixed while comparing hyperparameters
 
-FEATURES_CSV = Path("data") / "generated_features.csv"
-RESULTS_CSV = Path("svr_results.csv")
+HERE = Path(__file__).parent #fix from Ai
+
+
+FEATURES_CSV = HERE / "data" / "generated_features.csv"
+RESULTS_CSV = HERE / "svr_results.csv"
 
 N_SPLITS = 5
 RANDOM_STATE = 0
@@ -30,6 +31,7 @@ CALCULATE_TEST_METRICS = False
 #Loading the data and honouring the split
 
 data = pd.read_csv(FEATURES_CSV)
+
 train = data[data["split"] == "train"].copy()
 test  = data[data["split"] == "test"].copy()
 
