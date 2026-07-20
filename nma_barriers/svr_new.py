@@ -2,6 +2,7 @@
 #Import necessary libraries
 
 from pathlib import Path
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 import numpy as np
 import pandas as pd
@@ -18,14 +19,13 @@ from sklearn.model_selection import KFold, cross_validate
 
 HERE = Path(__file__).parent #fix from Ai
 
-
 FEATURES_CSV = HERE / "data" / "generated_features.csv"
 RESULTS_CSV = HERE / "svr_results.csv"
 
 N_SPLITS = 5
 RANDOM_STATE = 0
 
-CALCULATE_TEST_METRICS = False
+CALCULATE_TEST_METRICS = True
 
 
 #Loading the data and honouring the split
@@ -124,7 +124,7 @@ def save_result(result, label):
 
 def main():
 
-    result = svr_pipeline(C=5, epsilon=0.1, gamma=0.01)
+    result = svr_pipeline(C=500, epsilon=0.3, gamma=0.0007)
     save_result(result, "cv")
 
     print(f"C = {result['C']}, epsilon = {result['epsilon']}, gamma = {result['gamma']}")
@@ -133,7 +133,7 @@ def main():
     print(f"r2   = {result['r2']:.4f} +/- {result['std_r2']:.4f}")
 
     if CALCULATE_TEST_METRICS:
-        test_result = svr_test(C=5, epsilon=0.1, gamma=0.01)
+        test_result = svr_test(C=500, epsilon=0.3, gamma=0.0007)
         save_result(test_result, "test")
         print()
         print("Withheld test set")
