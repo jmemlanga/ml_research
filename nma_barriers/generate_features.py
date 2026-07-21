@@ -23,15 +23,16 @@ from rdkit.Chem import (
 from rdkit.Chem.EState import EState
 from rdkit.Geometry import Point3D
 
+HERE = Path(__file__).resolve().parent 
 
 # =============================================================================
 # PATHS TO EDIT
 # =============================================================================
 
-INPUT_CSV = Path("full_data.csv")
+INPUT_CSV = HERE / "data" / "raw" / "full_data.csv"
 GS_DIR = Path("/home/mjp218/data/nitro/parent/AM1/gs/all_done")
 TS_DIR = Path("/home/mjp218/data/nitro/parent/AM1/ts/all_done")
-OUTPUT_CSV = Path("generated_features.csv")
+OUTPUT_CSV = HERE / "data" / "features" / "generated_features.csv"
 
 
 # =============================================================================

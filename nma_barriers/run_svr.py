@@ -13,6 +13,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 
+HERE = Path(__file__).resolve().parent
 
 # =============================================================================
 # SETTINGS TO EDIT
@@ -22,11 +23,11 @@ from sklearn.svm import SVR
 
 
 FEATURES_DIR = Path("data")
-FEATURES_CSV = FEATURES_DIR / "generated_features.csv"
+FEATURES_CSV = HERE / "data" / "features" / "generated_features.csv"
 
 # The results from each run are written here.
 OUTPUT_DIR = Path(".")
-RESULTS_CSV = OUTPUT_DIR / "svr_results.csv"
+RESULTS_CSV = HERE / "data" / "results" / "svr_results.csv"
 
 # SVR hyperparameters to experiment with.
 C = 5.0

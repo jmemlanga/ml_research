@@ -19,8 +19,8 @@ from sklearn.model_selection import KFold, cross_validate
 
 HERE = Path(__file__).parent #fix from Ai
 
-FEATURES_CSV = HERE / "data" / "generated_features.csv"
-RESULTS_CSV = HERE / "svr_results.csv"
+FEATURES_CSV = HERE / "data" / "features" / "generated_features.csv"
+RESULTS_CSV = HERE / "data" / "results" / "svr_results.csv"
 
 N_SPLITS = 5
 RANDOM_STATE = 0
