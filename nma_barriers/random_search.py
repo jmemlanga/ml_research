@@ -15,7 +15,7 @@ from svr_new import svr_pipeline, save_result
 # Seed for the sampling of configurations. Deliberately separate from
 # RANDOM_STATE in svr_new, which seeds the CV fold split. The folds must
 # stay identical across every method; the draws must not.
-SEARCH_SEED = 1
+SEARCH_SEED = 5
 N_ITER = 30
 
 
