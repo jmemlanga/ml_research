@@ -25,7 +25,7 @@ RESULTS_CSV = HERE / "data" / "results" / "svr_results.csv"
 N_SPLITS = 5
 RANDOM_STATE = 0
 
-CALCULATE_TEST_METRICS = True
+CALCULATE_TEST_METRICS = False
 
 
 #Loading the data and honouring the split
@@ -114,11 +114,15 @@ def svr_test(C, epsilon, gamma):
     }
 
 
-def save_result(result, label):
-
+def save_result(result, method, space="narrow", seed=None, eval_index=None):
     #Adds one row to the results file so runs build up instead of being lost
-
-    row = pd.DataFrame([{"evaluation": label, **result}])
+    row = pd.DataFrame([{
+        "method": method,
+        "space": space,
+        "seed": seed,
+        "eval_index": eval_index,
+        **result,
+    }])
     row.to_csv(RESULTS_CSV, mode="a", header=not RESULTS_CSV.exists(), index=False)
 
 
