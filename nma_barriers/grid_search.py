@@ -1,61 +1,31 @@
-"""
-Grid search baseline for the NMA barrier SVR.
+"""Grid search baseline — narrow box only, 3x3x3 = 27 evals, budget-matched.
 
-Deterministic counterpart to random_search.py: instead of drawing configs from
-distributions, it evaluates every point on a fixed 3 x 3 x 3 grid (27 configs,
-budget-matched to the 30-evaluation random search).
-
-Results are tagged 'grid_search' so aggregate_random_search.py-style tooling can
-pick them out of the shared results CSV.
+Deterministic (no seeds, seed=0 fixed). A grid over the wide box would be
+meaningless (3 points over 9 decades of C), so grid runs narrow only.
+eval_index is the grid-point number so it shares the plot's x-axis.
 """
 
 import itertools
-
 import numpy as np
 
-# Same helpers random_search.py uses. Adjust the import path if that script
-# defines them locally rather than in a shared module.
-from svr_utils import svr_pipeline, save_result
+from search_space import SEARCH_SPACE
+from svr_new import svr_pipeline, save_result
 
 
-# Log-spaced on C and gamma because both span orders of magnitude and the model
-# responds to their ratio, not their absolute difference. Linear on epsilon
-# because it lives on a bounded, roughly linear scale.
-C_GRID = np.logspace(0, 4, 3)        # 1, 100, 10_000
-GAMMA_GRID = np.logspace(-5, -1, 3)  # 1e-5, 1e-3, 1e-1
-EPSILON_GRID = [0.05, 0.3, 0.8]
-
-TAG = "grid_search"
-
-
-def build_grid():
-    """Every combination of the three axes, as a list of config dicts."""
-    combos = itertools.product(C_GRID, EPSILON_GRID, GAMMA_GRID)
-    return [{"C": c, "epsilon": eps, "gamma": g} for c, eps, g in combos]
+def _axis(spec, n):
+    if spec["scale"] == "log":
+        return np.logspace(np.log10(spec["low"]), np.log10(spec["high"]), n)
+    return np.linspace(spec["low"], spec["high"], n)
 
 
 def main():
-    grid = build_grid()
-    print(f"Grid: {len(C_GRID)} x {len(EPSILON_GRID)} x {len(GAMMA_GRID)} "
-          f"= {len(grid)} configurations\n")
+    C_grid   = _axis(SEARCH_SPACE["C"], 3)
+    g_grid   = _axis(SEARCH_SPACE["gamma"], 3)
+    eps_grid = _axis(SEARCH_SPACE["epsilon"], 3)
 
-    best_mae = None
-    best_config = None
-
-    for i, config in enumerate(grid, start=1):
-        result = svr_pipeline(**config)
-        save_result(result, TAG)
-
-        mae = result["mae"]
-        if best_mae is None or mae < best_mae:
-            best_mae = mae
-            best_config = config
-
-        print(f"{i:>3}  C={config['C']:>12.4f}  epsilon={config['epsilon']:.4f}  "
-              f"gamma={config['gamma']:.6f}  MAE={mae:.4f}  best={best_mae:.4f}")
-
-    print(f"\nGrid search: best MAE after {len(grid)} evaluations: {best_mae:.4f}")
-    print(f"Best config: {best_config}")
+    for i, (c, eps, g) in enumerate(itertools.product(C_grid, eps_grid, g_grid)):
+        result = svr_pipeline(C=float(c), epsilon=float(eps), gamma=float(g))
+        save_result(result, method="grid", space="narrow", seed=0, eval_index=i)
 
 
 if __name__ == "__main__":

@@ -1,9 +1,9 @@
-
 #Import necessary libraries
 
 from pathlib import Path
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
+import warnings
 import numpy as np
 import pandas as pd
 
@@ -13,11 +13,19 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import KFold, cross_validate
+from sklearn.exceptions import ConvergenceWarning
+
+# Degenerate wide-box configs (huge C/gamma) can otherwise hang for minutes each;
+# max_iter caps them so they bail and score poorly instead of freezing the run.
+# The convergence warnings those capped fits emit are expected and silenced here.
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+MAX_ITER = 100000
 
 
 #Settings that stay fixed while comparing hyperparameters
 
-HERE = Path(__file__).parent #fix from Ai
+HERE = Path(__file__).parent
 
 FEATURES_CSV = HERE / "data" / "features" / "generated_features.csv"
 RESULTS_CSV = HERE / "data" / "results" / "svr_results.csv"
@@ -34,6 +42,7 @@ data = pd.read_csv(FEATURES_CSV)
 
 train = data[data["split"] == "train"].copy()
 test  = data[data["split"] == "test"].copy()
+lit   = data[data["split"] == "lit_test"].copy()
 
 
 #Removing the columns that are not features
@@ -48,6 +57,9 @@ y_train = train["dft_barrier"]
 X_test = test[feature_cols]
 y_test = test["dft_barrier"]
 
+X_lit = lit[feature_cols]
+y_lit = lit["dft_barrier"]
+
 
 #The folds are built once so every configuration is scored on the same splits
 
@@ -60,7 +72,7 @@ def svr_pipeline(C, epsilon, gamma):
         ("imputer", SimpleImputer(strategy="median")),
         ("variance", VarianceThreshold()),
         ("scaler", StandardScaler()),
-        ("svr", SVR(kernel="rbf", C=C, epsilon=epsilon, gamma=gamma)),
+        ("svr", SVR(kernel="rbf", C=C, epsilon=epsilon, gamma=gamma, max_iter=MAX_ITER)),
     ])
 
     results = cross_validate(
@@ -98,7 +110,7 @@ def svr_test(C, epsilon, gamma):
         ("imputer", SimpleImputer(strategy="median")),
         ("variance", VarianceThreshold()),
         ("scaler", StandardScaler()),
-        ("svr", SVR(kernel="rbf", C=C, epsilon=epsilon, gamma=gamma)),
+        ("svr", SVR(kernel="rbf", C=C, epsilon=epsilon, gamma=gamma, max_iter=MAX_ITER)),
     ])
 
     pipeline.fit(X_train, y_train)
@@ -111,6 +123,30 @@ def svr_test(C, epsilon, gamma):
         "mae": mean_absolute_error(y_test, predictions),
         "rmse": np.sqrt(mean_squared_error(y_test, predictions)),
         "r2": r2_score(y_test, predictions),
+    }
+
+
+def svr_lit_test(C, epsilon, gamma):
+
+    #Final evaluation on the held-out literature set (37 rows from the paper)
+
+    pipeline = Pipeline(steps=[
+        ("imputer", SimpleImputer(strategy="median")),
+        ("variance", VarianceThreshold()),
+        ("scaler", StandardScaler()),
+        ("svr", SVR(kernel="rbf", C=C, epsilon=epsilon, gamma=gamma, max_iter=MAX_ITER)),
+    ])
+
+    pipeline.fit(X_train, y_train)
+    predictions = pipeline.predict(X_lit)
+
+    return {
+        "C": C,
+        "epsilon": epsilon,
+        "gamma": gamma,
+        "mae": mean_absolute_error(y_lit, predictions),
+        "rmse": np.sqrt(mean_squared_error(y_lit, predictions)),
+        "r2": r2_score(y_lit, predictions),
     }
 
 

@@ -12,8 +12,8 @@ from search_space import SEARCH_SPACE
 from svr_new import svr_pipeline, save_result
 
 SEARCH_SEED = 1
-N_ITER = 30
-N_STARTUP = 10 #Number of configurations used before the GP takes over 
+N_ITER = 10
+N_STARTUP = 0 #Number of configurations used before the GP takes over 
 
 METHOD = "bayesian"
 

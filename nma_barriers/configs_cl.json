@@ -1,0 +1,12 @@
+[
+  {"C": 1200, "gamma": 0.006, "epsilon": 0.1},
+  {"C": 100.0,"gamma": 0.007,"epsilon": 0.1},
+  {"C": 20.0,"gamma": 0.007,"epsilon": 0.05},
+  {"C": 10.0,"gamma": 0.003,"epsilon": 0.05},
+  {"C": 20.0,"gamma": 0.007,"epsilon": 0.01},
+  {"C": 30.0,"gamma": 0.012,"epsilon": 0.05},
+  {"C": 20.0,"gamma": 0.005,"epsilon": 0.05},
+  {"C": 35.0,"gamma": 0.005,"epsilon": 0.04},
+  {"C": 60.0,"gamma": 0.005,"epsilon": 0.03},
+  {"C": 42.0,"gamma": 0.005,"epsilon": 0.035}
+]
