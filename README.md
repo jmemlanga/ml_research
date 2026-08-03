@@ -14,4 +14,4 @@ go, and the structure will likely change more than once before September.
 
 **Stack:** Python · scikit-learn · Optuna · PyTorch · PyTorch Geometric · RDKit · pandas · NumPy · matplotlib
 
-Jacob Mlang'a — MSci Chemistry with Molecular Physics, Imperial College London
+Jacob Mlang'a - MSci Chemistry with Molecular Physics, Imperial College London
